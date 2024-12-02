@@ -1,5 +1,6 @@
 package ngod.dev.aicoding
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 
