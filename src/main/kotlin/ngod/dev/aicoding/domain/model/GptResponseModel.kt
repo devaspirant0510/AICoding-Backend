@@ -2,7 +2,7 @@ package ngod.dev.aicoding.domain.model
 
 // 요청 DTO
 data class GPTRequest(
-    val model: String = "gpt-3.5-turbo",
+    val model: String = "gpt-4o",
     val messages: List<Message>
 )
 

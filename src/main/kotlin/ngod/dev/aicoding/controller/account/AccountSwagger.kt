@@ -3,10 +3,7 @@ package ngod.dev.aicoding.controller.account
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
-import ngod.dev.aicoding.controller.account.dto.RequestAccountDto
-import ngod.dev.aicoding.controller.account.dto.RequestLoginDto
-import ngod.dev.aicoding.controller.account.dto.ResponseLoginDto
-import ngod.dev.aicoding.controller.account.dto.ResponseReGenerateToken
+import ngod.dev.aicoding.controller.account.dto.*
 import ngod.dev.aicoding.core.ApiResult
 import ngod.dev.aicoding.data.entity.Account
 import ngod.dev.aicoding.data.projectrion.AccountProjection
@@ -29,4 +26,11 @@ interface AccountSwagger {
 
     @Operation(summary = "액세스 토큰 재발급", description = "액세스토큰이 만료될경우 리프레시토큰으로 토큰 재발급")
     fun regenerateAccessToken(request: HttpServletRequest):ApiResult<ResponseReGenerateToken>
+
+    @Operation(summary ="액세스토큰으로 유저 정보 조회", description = "액세스토큰으로 유저정보 조히")
+    fun getUserWithAccessToken(token:String):ApiResult<AccountProjection>
+
+    @Operation(summary ="액세스토큰으로 유저 정보 조회", description = "액세스토큰으로 유저정보 조히")
+    fun updateExpForUser(token:String,requestUpdateExp: RequestUpdateExp): ApiResult<AccountProjection>
+
 }

@@ -31,16 +31,25 @@ class AccountService(
     fun checkedDuplicatedId(userId: String): Boolean {
         return accountRepository.existsByUserId(userId)
     }
-    fun getUserByToken(token:String):AccountProjection{
+
+    fun getUserByTokenAccount(token: String): Account {
         val userId = jwtProvider.verifyAccessToken(token).id
-        val account = accountRepository.findAccountById(userId).orElseThrow {
-            throw ApiException(HttpStatus.INTERNAL_SERVER_ERROR.value(),"존재하지 않는 계정입니다.")
+        val account = accountRepository.findById(userId).orElseThrow {
+            throw ApiException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "존재하지 않는 계정입니다.")
         }
         return account
     }
-    fun getUserByUid(uid:String):Account{
+    fun getUserByToken(token: String): AccountProjection {
+        val userId = jwtProvider.verifyAccessToken(token).id
+        val account = accountRepository.findAccountById(userId).orElseThrow {
+            throw ApiException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "존재하지 않는 계정입니다.")
+        }
+        return account
+    }
+
+    fun getUserByUid(uid: String): Account {
         val account = accountRepository.findByUid(UUID.fromString(uid)).orElseThrow {
-            throw ApiException(HttpStatus.NOT_FOUND.value(),"존재하지 않는 계정입니다")
+            throw ApiException(HttpStatus.NOT_FOUND.value(), "존재하지 않는 계정입니다")
         }
         return account
     }
@@ -65,14 +74,14 @@ class AccountService(
         val responseDto = ResponseLoginDto(
             accessToken = jwtProvider.generateAccessToken(account),
             refreshToken = jwtProvider.generateRefreshToken(account.uid.toString()),
-            user = object :AccountProjection{
-                override val id: Long=account.id!!
-                override val userId: String=account.userId
-                override val nickname: String=account.nickname
-                override val profileUrl: String?=account.profileUrl
-                override val createdAt: LocalDateTime=account.createdAt
-                override val cash: Long=account.cash
-                override val exp: Long=account.exp
+            user = object : AccountProjection {
+                override val id: Long = account.id!!
+                override val userId: String = account.userId
+                override val nickname: String = account.nickname
+                override val profileUrl: String? = account.profileUrl
+                override val createdAt: LocalDateTime = account.createdAt
+                override val cash: Long = account.cash
+                override val exp: Long = account.exp
             }
         )
         return responseDto
@@ -98,11 +107,23 @@ class AccountService(
         log.info("$list")
         return list
     }
-    fun refreshAccessToken(refreshToken:String):String{
+
+    fun refreshAccessToken(refreshToken: String): String {
         val claims = jwtProvider.verifyToken(refreshToken)
-        val refreshToken = jwtProvider.mappingToken(claims,RefreshTokenPayload::class.java)
+        val refreshToken = jwtProvider.mappingToken(claims, RefreshTokenPayload::class.java)
         val account = getUserByUid(refreshToken.sub)
         return jwtProvider.generateAccessToken(account)
+    }
 
+    fun updateExpByUser(token: String,addedExp:Long):AccountProjection {
+        val claims = jwtProvider.verifyToken(token)
+        val accountId = (claims.get("id") as? Number)?.toLong()?:throw ApiException(HttpStatus.NOT_FOUND.value(),"인증되지 않은 유저입니다.")
+        val account = accountRepository.findAccountById(accountId).orElseThrow {
+            throw ApiException(HttpStatus.NOT_FOUND.value(),"유저를 찾는데 실패했습니다.")
+        }
+        accountRepository.updateExpById(accountId,account.exp+addedExp)
+        return accountRepository.findAccountById(accountId).orElseThrow {
+            throw ApiException(HttpStatus.NOT_FOUND.value(),"유저를 찾는데 실패했습니다.")
+        }
     }
 }

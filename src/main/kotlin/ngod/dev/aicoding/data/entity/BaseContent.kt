@@ -20,11 +20,13 @@ data class BaseContent(
     @Column
     var createdAt: LocalDateTime = LocalDateTime.now(),
     @Enumerated(EnumType.STRING)
-    var difficultly: Difficultly?=null,
+    var difficultly: Difficultly? = null,
     @Enumerated(EnumType.STRING)
     var studyType: StudyType = StudyType.QUIZ,
     @OneToMany
-    var quiz:MutableList<Quiz>? = mutableListOf(),
+    var quiz: MutableList<Quiz>? = mutableListOf(),
     @OneToOne
-    var codingTest:CodingTest?=null
+    var codingTest: CodingTest? = null,
+    @OneToOne
+    var codeReview: CodeReview? = null
 )

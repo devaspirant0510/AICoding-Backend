@@ -12,13 +12,13 @@ class GptServiceTest{
     lateinit var gptService: GptService
     @Test
     fun testGptGenerateQuiz(){
-        val result = gptService.generateQuiz(RequestContentDto(category = "파이썬", difficultly = Difficultly.EASY,))
+        val result = gptService.generateQuiz(RequestContentDto(category = "파이썬", difficultly = Difficultly.EASY, prompt = null))
         println(result)
         println(result.size)
     }
     @Test
     fun testGptGenerateCodingTest(){
-        val result = gptService.generateCodingTest(RequestContentDto(category = "BFS", difficultly = Difficultly.HARD,))
+        val result = gptService.generateCodingTest(RequestContentDto(category = "BFS", difficultly = Difficultly.HARD, prompt = null))
         println(result)
 
     }

@@ -4,7 +4,9 @@ import ngod.dev.aicoding.controller.quiz.dto.CheckedQuizDto
 import ngod.dev.aicoding.controller.quiz.dto.RequestContentDto
 import ngod.dev.aicoding.core.ApiResult
 import ngod.dev.aicoding.data.entity.BaseContent
+import ngod.dev.aicoding.data.projectrion.ContentQuizProjection
 import ngod.dev.aicoding.data.projectrion.QuizProjection
+import ngod.dev.aicoding.domain.service.AccountService
 import ngod.dev.aicoding.domain.service.QuizService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -12,14 +14,20 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/quiz")
 class QuizController(
-    private val quizService: QuizService
+    private val quizService: QuizService,
+    private val accountService: AccountService
 ) : QuizSwagger {
     @PostMapping
     override fun createQuiz(
         @RequestHeader("Authorization") token: String,
         @RequestBody requestContentDto: RequestContentDto
     ): ApiResult<BaseContent> {
-        return ApiResult.success(quizService.createQuiz(requestContentDto, 1), HttpStatus.CREATED.value(), "퀴즈 생성 완료")
+        val account = accountService.getUserByToken(token)
+        return ApiResult.success(
+            quizService.createQuiz(requestContentDto, account.id),
+            HttpStatus.CREATED.value(),
+            "퀴즈 생성 완료"
+        )
     }
 
     @GetMapping("/{id}/a")
@@ -77,6 +85,10 @@ class QuizController(
         } else {
             ApiResult.success(isCorrect, HttpStatus.OK.value(), "Quiz 정답체크 : 오답")
         }
+    }
+
+    override fun getAllQuiz(token: String): ApiResult<List<ContentQuizProjection>> {
+        TODO("Not yet implemented")
     }
 
 }
