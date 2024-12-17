@@ -133,7 +133,7 @@ class GptService(
                 Message(role = "system", content = "내가 코드를 보내주면 너는 해당코드의 개선점을 분석해서 코드 리뷰를 상세히 해줘 또한 한국어로 말해줘"),
                 Message(role = "system",
                     content = "{title:string,\ndescription:string\n} 다음과 같은 형태의 json 으로 응답해주고 각 항목에 대한 설명은 다음과 같아" +
-                            "title = 해당 코드 리뷰 제목 description = 코디리뷰할 내용 내용이 길어질시 이스케이프를 통해 처리 3000자 이내 "),
+                            "title = 해당 코드 리뷰 제목 description = 코드리뷰 할 내용 내용이 길어질시 3000자 이내 마크다운 형식 "),
                 Message(role = "user",
                     content = "작성언어 :${requestCodeReviewDto.language}\n코드 : ${requestCodeReviewDto.code} ")))
         val response = webClient.build()
