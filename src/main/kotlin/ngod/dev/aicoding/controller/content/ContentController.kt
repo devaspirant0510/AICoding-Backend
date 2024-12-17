@@ -16,19 +16,6 @@ import org.springframework.web.bind.annotation.RestController
 class ContentController(
     private val contentService: ContentService
 ) : ContentSwagger {
-    @GetMapping("{id}")
-    override fun findByContentId(
-        @PathVariable(name = "id")
-        id: Long
-    ): ApiResult<ContentProjection> {
-        return ApiResult.success(
-            contentService.findContentById(id),
-            HttpStatus.OK.value(),
-            "BaseContent 를 성공적으로 불러왔습니다."
-        )
-    }
-
-
     @GetMapping("/last")
     override fun findAllLastCreatedContent(
         @RequestHeader("Authorization")
@@ -38,6 +25,18 @@ class ContentController(
             contentService.findAllTop3ContentForCreatedAt(token),
             HttpStatus.OK.value(),
             "BaseContent 목록을 불러왔습니다."
+        )
+    }
+
+    @GetMapping("{id}")
+    override fun findByContentId(
+        @PathVariable(name = "id")
+        id: Long
+    ): ApiResult<ContentProjection> {
+        return ApiResult.success(
+            contentService.findContentById(id),
+            HttpStatus.OK.value(),
+            "BaseContent 를 성공적으로 불러왔습니다."
         )
     }
 

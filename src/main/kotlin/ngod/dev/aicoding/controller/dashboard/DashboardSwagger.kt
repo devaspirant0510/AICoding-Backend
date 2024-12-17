@@ -8,4 +8,5 @@ import ngod.dev.aicoding.data.projectrion.QuizProjection
 interface DashboardSwagger {
     fun getAllLastQuizLimit(token: String,): ApiResult<List<ContentQuizProjection>>
     fun getAllLastCodingTestLimit(token:String):ApiResult<List<ContentProjection>>
+    fun getAllLastCodeReviewLimit(token:String):ApiResult<List<ContentProjection>>
 }

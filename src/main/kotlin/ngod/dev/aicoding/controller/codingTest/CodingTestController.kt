@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("api/v1/codingTest")
 class CodingTestController(
     private val codingTestService: CodingTestService,
-    private val contentService: ContentService
 ) : CodingTestSwagger {
     @PostMapping
     override fun createCodingTest(

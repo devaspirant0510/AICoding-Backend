@@ -35,4 +35,15 @@ class DashboardService(
         return quizList
     }
 
+    fun getCodeReviewLimitByUser(token:String):List<ContentProjection>{
+        val user = jwtProvider.verifyToken(token)
+        val userId = (user.get("id") as? Number)?.toLong() ?: throw ApiException(HttpStatus.UNAUTHORIZED.value(),"인증오류")
+        val codeReviewList = contentRepository.findTop3ContentByAccountIdAndStudyTypeOrderByCreatedAtDesc(
+            userId,
+            StudyType.CODE_REVIEW
+        )
+        return  codeReviewList
+
+    }
+
 }

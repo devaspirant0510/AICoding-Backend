@@ -23,4 +23,12 @@ interface BaseContentRepository : JpaRepository<BaseContent, Long> {
     fun findAllByAccountId(
         accountId: Long
     ):List<ContentProjection>
+    fun findAllByAccountIdAndStudyTypeOrderByCreatedAtDesc(
+        accountId: Long,
+        studyType: StudyType
+    ):List<ContentProjection>
+    fun findBaseContentAllByAccountIdAndStudyTypeOrderByCreatedAtDesc(
+        accountId: Long,
+        studyType: StudyType
+    ):List<ContentQuizProjection>
 }

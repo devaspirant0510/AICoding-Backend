@@ -50,7 +50,12 @@ class CodeReviewController(
 
 
     @GetMapping("")
-    override fun getAllCodeReview(token: String): ApiResult<ContentProjection> {
-        TODO("Not yet implemented")
+    override fun getAllCodeReview(@RequestHeader("Authorization") token: String): ApiResult<List<ContentProjection>> {
+        return ApiResult.success(
+            codeReviewService.findAllCodeReview(token),
+            HttpStatus.OK.value(),
+            "데이터 조회 성공"
+        )
+
     }
 }

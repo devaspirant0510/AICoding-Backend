@@ -60,4 +60,8 @@ class CodeReviewService(
         }
         return result
     }
+    fun findAllCodeReview(token:String):List<ContentProjection>{
+        val account = accountService.getUserByToken(token)
+        return baseContentRepository.findAllByAccountIdAndStudyTypeOrderByCreatedAtDesc(account.id,StudyType.CODE_REVIEW)
+    }
 }

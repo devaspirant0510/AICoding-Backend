@@ -11,8 +11,6 @@ import org.hibernate.type.SqlTypes
 import org.springframework.data.annotation.TypeAlias
 
 @Entity
-@NoArgsConstructor
-
 data class Quiz(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

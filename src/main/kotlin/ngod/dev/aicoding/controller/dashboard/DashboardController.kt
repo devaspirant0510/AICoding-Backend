@@ -26,7 +26,6 @@ class DashboardController(
             "대시보드 퀴즈 조회 성공"
         )
     }
-
     @GetMapping("my/codingTest/last")
     override fun getAllLastCodingTestLimit(
         @RequestHeader("Authorization")
@@ -36,6 +35,14 @@ class DashboardController(
             dashboardService.getCodingTestLimitByUser(token),
             HttpStatus.OK.value(),
             "대시보드 코딩테스트 조회 성공"
+        )
+    }
+    @GetMapping("my/codeReview/last")
+    override fun getAllLastCodeReviewLimit(@RequestHeader("Authorization") token: String): ApiResult<List<ContentProjection>> {
+        return ApiResult.success(
+            dashboardService.getCodeReviewLimitByUser(token),
+            HttpStatus.OK.value(),
+            "대시보드 코드리뷰 조회 성공"
         )
     }
 }

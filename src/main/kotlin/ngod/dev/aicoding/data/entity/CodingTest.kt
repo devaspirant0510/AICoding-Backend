@@ -9,15 +9,15 @@ data class CodingTest (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
     @Column
-    var title: String = "",
+    var title: String ,
     @Column
-    var description: String = "",
+    var description: String,
     @Column
-    var input: String = "",
+    var input: String,
     @Column
-    var output: String = "",
+    var output: String,
     @Column
-    var hint:String = "",
+    var hint:String,
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(
         columnDefinition = "text[]"

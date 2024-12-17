@@ -2,6 +2,7 @@ package ngod.dev.aicoding.controller.quiz
 
 import ngod.dev.aicoding.controller.quiz.dto.CheckedQuizDto
 import ngod.dev.aicoding.controller.quiz.dto.RequestContentDto
+import ngod.dev.aicoding.controller.quiz.dto.RequestFeedbackDto
 import ngod.dev.aicoding.core.ApiResult
 import ngod.dev.aicoding.data.entity.BaseContent
 import ngod.dev.aicoding.data.projectrion.ContentQuizProjection
@@ -29,6 +30,20 @@ class QuizController(
             "퀴즈 생성 완료"
         )
     }
+
+    @PostMapping("/result/feedback")
+    override fun feedBackQuizForResult(
+        @RequestHeader("Authorization") token: String,
+        @RequestBody requestFeedbackDto: RequestFeedbackDto
+    ): ApiResult<String> {
+        return ApiResult.success(
+            quizService.createFeedback(requestFeedbackDto.data),
+            HttpStatus.OK.value(),
+            "피드백 생성 완료"
+        )
+
+    }
+
 
     @GetMapping("/{id}/a")
     override fun findQuizByContentId(
@@ -87,8 +102,14 @@ class QuizController(
         }
     }
 
-    override fun getAllQuiz(token: String): ApiResult<List<ContentQuizProjection>> {
-        TODO("Not yet implemented")
+    @GetMapping
+    override fun getAllQuiz(@RequestHeader("Authorization") token: String): ApiResult<List<ContentQuizProjection>> {
+        return ApiResult.success(
+            quizService.findAllQuizAll(token),
+            HttpStatus.OK.value(),
+            "데이터 조회 성공"
+        )
+
     }
 
 }

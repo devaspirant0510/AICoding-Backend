@@ -26,26 +26,34 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/account")
 class AccountController(
     private val accountService: AccountService,
-    private val accountRepository: AccountRepository
 ) : AccountSwagger {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
-
-    @PostMapping()
-    override fun joinAccount(
-        @RequestBody
-        requestAccountDto: RequestAccountDto
-    ): ApiResult<AccountProjection> {
-        return ApiResult.success(accountService.createAccount(requestAccountDto), HttpStatus.CREATED.value(), "회원가입 성공")
-    }
 
     @PostMapping("/login")
     override fun login(
         @RequestBody
         requestLoginDto: RequestLoginDto
     ): ApiResult<ResponseLoginDto> {
-        return ApiResult.success(accountService.loginAccount(requestLoginDto), HttpStatus.OK.value(), "로그인 성공")
+        log.info("POST: [api/v1/account/login] body:${requestLoginDto}")
+        return ApiResult.success(
+            accountService.loginAccount(requestLoginDto),
+            HttpStatus.OK.value(),
+            "로그인 성공"
+        )
     }
 
+    @PostMapping
+    override fun joinAccount(
+        @RequestBody
+        requestAccountDto: RequestAccountDto
+    ): ApiResult<AccountProjection> {
+        log.info("POST: [api/v1/account] body:${requestAccountDto}")
+        return ApiResult.success(
+            accountService.createAccount(requestAccountDto),
+            HttpStatus.CREATED.value(),
+            "회원가입 성공"
+        )
+    }
     @GetMapping("/{id}")
     override fun getUserById(
         @RequestHeader(name = "Authorization")
@@ -86,7 +94,7 @@ class AccountController(
         @RequestHeader("Authorization")
         token: String
     ): ApiResult<AccountProjection> {
-        return ApiResult.success(accountService.getUserByToken(token),HttpStatus.OK.value(),"유저 정보 조회성공 ")
+        return ApiResult.success(accountService.getUserByToken(token), HttpStatus.OK.value(), "유저 정보 조회성공 ")
     }
 
     @PatchMapping("/exp")
@@ -94,9 +102,10 @@ class AccountController(
         @RequestHeader("Authorization")
         token: String,
         @RequestBody
-        requestUpdateExp: RequestUpdateExp):ApiResult<AccountProjection> {
+        requestUpdateExp: RequestUpdateExp
+    ): ApiResult<AccountProjection> {
         return ApiResult.success(
-            accountService.updateExpByUser(token,requestUpdateExp.exp),
+            accountService.updateExpByUser(token, requestUpdateExp.exp),
             HttpStatus.OK.value(),
             "exp"
         )

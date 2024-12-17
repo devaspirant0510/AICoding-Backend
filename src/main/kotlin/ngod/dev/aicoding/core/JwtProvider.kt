@@ -21,36 +21,16 @@ class JwtProvider {
 
     fun generateAccessToken(account: Account): String {
         return Jwts.builder()
-            .setSubject(account.uid.toString())
-            .setIssuer("http://localhost:8080/api/v1/auth")
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 60))// 1시간 만료 토큰
-            .claim("nickname", account.nickname)
-            .claim("id", account.id)
-            .claim("profileUrl", account.profileUrl)
-            .claim("userId", account.userId)
-            .claim("uid", account.uid)
-            .signWith(
-                SignatureAlgorithm.HS256, jwtSecret
-            ).compact()
+            .setSubject(account.uid.toString()).setIssuer("http://localhost:8080/api/v1/auth")
+            .setIssuedAt(Date()).setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 60))
+            .claim("nickname", account.nickname).claim("id", account.id).claim("userId", account.userId)
+            .claim("uid", account.uid).signWith(SignatureAlgorithm.HS256, jwtSecret).compact()
     }
 
     fun generateRefreshToken(uid: String): String {
-        return Jwts.builder()
-            .setSubject(uid)
-            .setIssuer("http://localhost:8080/api/v1/auth")
-            .setIssuedAt(Date())
-            .setExpiration(Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30))// 1개월 만료 토큰
-            .signWith(
-                SignatureAlgorithm.HS256, jwtSecret
-            ).compact()
-    }
-    fun<T> mappingToken(claims: Claims,targetClass:Class<T>):T{
-        val gson = Gson()
-        val claimsJson = gson.toJson(claims)
-        println(claimsJson)
-        val jwtBody = gson.fromJson(claimsJson,targetClass)
-        return jwtBody
+        return Jwts.builder().setSubject(uid).setIssuer("http://localhost:8080/api/v1/auth").setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30)).signWith(
+                SignatureAlgorithm.HS256, jwtSecret).compact()
     }
     fun verifyToken(token:String):Claims{
         try{
@@ -79,6 +59,13 @@ class JwtProvider {
             println("알 수 없는 오류 발생: ${e.message}")
             throw ApiException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "알 수 없는 오류 발생: ${e.message}")
         }
+    }
+    fun<T> mappingToken(claims: Claims,targetClass:Class<T>):T{
+        val gson = Gson()
+        val claimsJson = gson.toJson(claims)
+        println(claimsJson)
+        val jwtBody = gson.fromJson(claimsJson,targetClass)
+        return jwtBody
     }
 
     fun verifyAccessToken(token: String): AccessTokenPayload {

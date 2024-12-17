@@ -31,6 +31,23 @@ class AccountService(
     fun checkedDuplicatedId(userId: String): Boolean {
         return accountRepository.existsByUserId(userId)
     }
+    fun createAccount(requestAccountDto: RequestAccountDto): AccountProjection {
+        if(accountRepository.existsByUserId(requestAccountDto.userId)){
+            throw ApiException(HttpStatus.CONFLICT.value(),"이미 존재하는 ID 입니다.")
+        }
+        // 비밀번호 해싱하여 데이터베이스에 저장
+        val encodePassword = bcryptProvider.encodePassword(requestAccountDto.password)
+        val userUid = bcryptProvider.generateUUID()
+        val account = Account(
+            nickname = requestAccountDto.nickname,
+            userId = requestAccountDto.userId,
+            password = encodePassword,
+            uid = userUid
+        )
+        val savedAccount = accountRepository.save(account)
+        return accountRepository.findAllById(savedAccount.id!!)
+    }
+
 
     fun getUserByTokenAccount(token: String): Account {
         val userId = jwtProvider.verifyAccessToken(token).id
@@ -65,7 +82,7 @@ class AccountService(
         log.info(requestLoginDto.userId)
         val loginAccount = accountRepository.findByUserId(requestLoginDto.userId)
         if (loginAccount.isEmpty) {
-            throw ApiException(HttpStatus.NOT_ACCEPTABLE.value(), "로그인 실패:존재하지 않는 아이디 입니다.")
+            throw ApiException(HttpStatus.NOT_ACCEPTABLE.value(), "로그인 실패: 존재하지 않는 아이디 입니다.")
         }
         if (!bcryptProvider.isMatchPassword(requestLoginDto.password, loginAccount.get().password)) {
             throw ApiException(HttpStatus.NOT_ACCEPTABLE.value(), "로그인 실패: 비밀번호가 일치하지 않습니다.")
@@ -78,28 +95,11 @@ class AccountService(
                 override val id: Long = account.id!!
                 override val userId: String = account.userId
                 override val nickname: String = account.nickname
-                override val profileUrl: String? = account.profileUrl
                 override val createdAt: LocalDateTime = account.createdAt
-                override val cash: Long = account.cash
                 override val exp: Long = account.exp
             }
         )
         return responseDto
-
-    }
-
-    fun createAccount(requestAccountDto: RequestAccountDto): AccountProjection {
-        // 비밀번호 해싱하여 데이터베이스에 저장
-        val encodePassword = bcryptProvider.encodePassword(requestAccountDto.password)
-        val userUid = bcryptProvider.generateUUID()
-        val account = Account(
-            nickname = requestAccountDto.nickname,
-            userId = requestAccountDto.userId,
-            password = encodePassword,
-            uid = userUid
-        )
-        val savedAccount = accountRepository.save(account)
-        return accountRepository.findAllById(savedAccount.id!!)
     }
 
     fun fetchAllAccount(): List<AccountProjection> {
@@ -121,7 +121,7 @@ class AccountService(
         val account = accountRepository.findAccountById(accountId).orElseThrow {
             throw ApiException(HttpStatus.NOT_FOUND.value(),"유저를 찾는데 실패했습니다.")
         }
-        accountRepository.updateExpById(accountId,account.exp+addedExp)
+        accountRepository.updateExpById(accountId,addedExp)
         return accountRepository.findAccountById(accountId).orElseThrow {
             throw ApiException(HttpStatus.NOT_FOUND.value(),"유저를 찾는데 실패했습니다.")
         }
